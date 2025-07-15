@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Malla Curricular - Estadística Informática</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #ffffff;
+    padding: 20px;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .ciclos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+  .ciclo {
+    width: 200px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+  }
+  .ciclo h2 {
+    text-align: center;
+    font-size: 16px;
+    margin: 0 0 10px 0;
+    background: #f5b7c7;
+    color: #fff;
+    padding: 5px;
+    border-radius: 4px;
+  }
+  .curso {
+    background: #e9ecef;
+    margin: 6px 0;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 14px;
+  }
+  .curso:hover {
+    background: #dee2e6;
+  }
+  .curso.activado {
+    background: #d7c4f3;
+    color: white;
+    font-weight: bold;
+  }
+  .curso.desbloqueado {
+    background: #f8c8dc;
+  }
+</style>
+</head>
+<body>
+
+<h1>Malla Curricular - Estadística Informática</h1>
+<div class="ciclos" id="contenedor"></div>
+
+<script>
+// Datos de cursos
+const cursos = [
+  // Ciclo I
+  {id:"CC1032",nombre:"Análisis Matemático I",ciclo:1,pre:[]},
+  {id:"CC1024",nombre:"Ecología General",ciclo:1,pre:[]},
+  {id:"CC1031",nombre:"Química General",ciclo:1,pre:[]},
+  {id:"EP1065",nombre:"Administración General",ciclo:1,pre:[]},
+  {id:"EP1035",nombre:"Introducción a la Ciencia de Datos",ciclo:1,pre:[]},
+  {id:"EP1036",nombre:"Sociedad y Cultura Peruana",ciclo:1,pre:[]},
+
+  // Ciclo II
+  {id:"CC2073",nombre:"Análisis Matemático II",ciclo:2,pre:["CC1032"]},
+  {id:"EP2088",nombre:"Perú en el Contexto Internacional",ciclo:2,pre:[]},
+  {id:"EP1061",nombre:"Lenguaje y Comunicación",ciclo:2,pre:[]},
+  {id:"CC1030",nombre:"Física General",ciclo:2,pre:[]},
+  {id:"EP2091",nombre:"Técnicas de Exploración de Datos",ciclo:2,pre:["EP1035"]},
+  {id:"EP2092",nombre:"Herramientas de Gestión Empresarial",ciclo:2,pre:["EP1065"]},
+  {id:"EP2067",nombre:"Economía General",ciclo:2,pre:[]},
+
+  // Ciclo III
+  {id:"EP2065",nombre:"Ingeniería de Procesos",ciclo:3,pre:["EP2091"]},
+  {id:"CC3108",nombre:"Matemáticas Discretas",ciclo:3,pre:["CC2073"]},
+  {id:"EP3085",nombre:"Estadística General",ciclo:3,pre:["CC2073"]},
+  {id:"EP2035",nombre:"Lenguaje de Programación I",ciclo:3,pre:["EP1035"]},
+  {id:"EP2028",nombre:"Redacción y Argumentación",ciclo:3,pre:["EP1061"]},
+  {id:"CC2074",nombre:"Álgebra Matricial",ciclo:3,pre:["CC2073"]},
+
+  // Ciclo IV
+  {id:"EP2081",nombre:"Análisis Estadístico",ciclo:4,pre:["EP3085"]},
+  {id:"EP2087",nombre:"Metodología de la Investigación",ciclo:4,pre:["EP3085"]},
+  {id:"EP3035",nombre:"Lenguaje de Programación II",ciclo:4,pre:["EP2035"]},
+  {id:"EP2183",nombre:"Métodos de Optimización",ciclo:4,pre:["CC2074"]},
+  {id:"EP2088C",nombre:"Ética y Ciudadanía",ciclo:4,pre:[]},
+  {id:"EP3190",nombre:"Sistemas de Gestión BD I",ciclo:4,pre:["EP2035","EP2065"]},
+
+  // Ciclo V
+  {id:"EP3168",nombre:"Diseños Experimentales I",ciclo:5,pre:["EP2081"]},
+  {id:"EP3170",nombre:"Estrategias de Muestreo",ciclo:5,pre:["EP2081"]},
+  {id:"EP3106",nombre:"Cálculo de Probabilidades",ciclo:5,pre:["CC2073"]},
+  {id:"EP3107",nombre:"Análisis de Regresión",ciclo:5,pre:["EP3085","CC2074"]},
+  {id:"EP3036",nombre:"Lenguaje de Programación III",ciclo:5,pre:["EP3035"]},                                                           
+
+  // Ciclo VI
+  {id:"EP4184",nombre:"Sistemas de Gestión BD II",ciclo:6,pre:["EP3036","EP3190"]},
+  {id:"EP4056",nombre:"Técnicas Multivariadas",ciclo:6,pre:["EP3107"]},
+  {id:"EP4202",nombre:"Algoritmia",ciclo:6,pre:["CC2074"]},
+  {id:"EP3169",nombre:"Inferencia Estadística",ciclo:6,pre:["EP3106"]},
+  {id:"EP3172",nombre:"Diseños Experimentales II",ciclo:6,pre:["EP3168"]},
+
+  // Ciclo VII
+  {id:"EP2403",nombre:"Marketing",ciclo:7,pre:["EP2092"]},
+  {id:"EP4068",nombre:"Estadística Bayesiana",ciclo:7,pre:["EP3169"]},
+  {id:"EP4150",nombre:"Modelos Lineales I",ciclo:7,pre:["EP3169"]},
+  {id:"EP3153",nombre:"Estadística Computacional",ciclo:7,pre:["EP4056"]},
+  {id:"EP2405",nombre:"Sistemas de Información Gerencial",ciclo:7,pre:["EP4184"]},
+
+  // Ciclo VIII
+  {id:"EP4187",nombre:"Investigación de Mercados",ciclo:8,pre:["EP2403","EP4056"]},
+  {id:"EP4186",nombre:"Gestión Estratégica de Datos",ciclo:8,pre:["EP2405"]},
+  {id:"EP4146",nombre:"Estadística No Paramétrica",ciclo:8,pre:[]},
+  {id:"EP4192",nombre:"Máquinas de Aprendizaje",ciclo:8,pre:["EP3153"]},
+  {id:"EP4185",nombre:"Modelos Lineales II",ciclo:8,pre:["EP4150"]},
+  {id:"EP4181",nombre:"Seminario Estadística Informática I",ciclo:8,pre:[]},
+
+  // Ciclo IX
+  {id:"EP5001",nombre:"Análisis Series de Tiempo",ciclo:9,pre:[]},
+  {id:"EP5191",nombre:"Estadística Espacial",ciclo:9,pre:[]},
+  {id:"EP5192",nombre:"Ciencia de Datos I",ciclo:9,pre:["EP4186"]},
+  {id:"EP5193",nombre:"Gestión Proyectos Información",ciclo:9,pre:[]},
+  {id:"EP5194",nombre:"Prácticas Pre-Profesionales",ciclo:9,pre:[]},
+  {id:"EP5117",nombre:"Seminario Estadística Informática II",ciclo:9,pre:[]},                                                             
+
+  // Ciclo X
+  {id:"EP5102",nombre:"Ciencia de Datos II",ciclo:10,pre:["EP5192"]},
+  {id:"EP5121",nombre:"Tecnologías Emergentes",ciclo:10,pre:["EP4192"]},
+  {id:"EP5171",nombre:"Seminario Estadística Informática III",ciclo:10,pre:["EP5117"]},
+];
+
+// Render
+const contenedor = document.getElementById("contenedor");
+for (let ciclo = 1; ciclo <= 10; ciclo++) {
+  const divCiclo = document.createElement("div");
+  divCiclo.className = "ciclo";
+  divCiclo.innerHTML = `<h2>Ciclo ${ciclo}</h2>`;
+  cursos.filter(c=>c.ciclo===ciclo).forEach(c=>{
+    const div = document.createElement("div");
+    div.className = "curso";
+    div.textContent = c.nombre;
+    div.dataset.id = c.id;
+    div.onclick = ()=>activar(c.id,true); // true = actualizar URL
+    divCiclo.appendChild(div);
+  });
+  contenedor.appendChild(divCiclo);
+}
+
+// Estado
+const activados = new Set();
+
+function activar(id, actualizarURL = false){
+  if(activados.has(id)) return;
+  activados.add(id);
+  // Cambia visualmente a activado
+  document.querySelectorAll(`[data-id="${id}"]`).forEach(e=>{
+    e.classList.remove("desbloqueado");
+    e.classList.add("activado");
+  });
+  // Desbloquea los siguientes cursos
+  cursos.forEach(c=>{
+    if(!activados.has(c.id) && c.pre.every(pr => activados.has(pr))){
+      document.querySelectorAll(`[data-id="${c.id}"]`).forEach(e=>{
+        e.classList.add("desbloqueado");
+      });
+    }
+  });
+  // Actualiza la URL
+  if (actualizarURL) {
+    const activadosArray = Array.from(activados);
+    const param = activadosArray.join(",");
+    history.replaceState(null, "", `?cursos=${param}`);
+  }
+}
+
+// Al cargar la página, revisa si hay cursos activados en la URL
+const params = new URLSearchParams(location.search);
+const cursosParam = params.get("cursos");
+if (cursosParam) {
+  cursosParam.split(",").forEach(id => activar(id,false));
+}
+</script>
